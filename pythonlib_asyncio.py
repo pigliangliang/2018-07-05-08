@@ -167,7 +167,7 @@ Loop:1 time: 2018-07-08 11:28:46.935312
 Loop:2 time: 2018-07-08 11:28:48.937996
 Loop:1 time: 2018-07-08 11:28:48.938177
 
-'''
+
 #python 3.5 引入了async/await关键字，上面的代码我们可以这样改写，使用async代替了@asyncio.coroutine，使用了await代替了yield from，
 import asyncio
 import datetime
@@ -182,12 +182,29 @@ loop = asyncio.get_event_loop()  # 获取一个event_loop
 tasks = [display_date(1, loop), display_date(2, loop)]
 loop.run_until_complete(asyncio.gather(*tasks))  # "阻塞"直到所有的tasks完成
 loop.close()
+'''
+import gevent
+
+from gevent import monkey
+monkey.patch_all()
+
+import requests
+urls = ['http://www.baidu.com','http://www.sina.com','http://www.hao123.com']
+
+def print_head(url):
+    print('starting%s' %url)
+    data =requests.get(url)
+    print(data.url)
+jobs = [gevent.spawn(print_head,url) for url in urls]
+gevent.joinall(jobs)
 
 
-
-
-
-
-
-
+'''
+startinghttp://www.baidu.com
+startinghttp://www.sina.com
+startinghttp://www.hao123.com
+http://www.baidu.com/
+http://www.hao123.com/
+http://www.sina.com.cn/
+'''
 
